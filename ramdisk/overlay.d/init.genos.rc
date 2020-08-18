@@ -1,0 +1,56 @@
+# Init genos Profiles
+on property:dev.bootcomplete=1
+    setprop vendor.post_boot.parsed 1
+    
+on property:vendor.post_boot.parsed=1
+   # genos / Performance Tweaks
+   # Set default profile on first boot
+   setprop persist.genos.profile 0
+   # Enable genos support
+   setprop genos.support 1
+   # Add kernel name
+   setprop persist.genos.kernel genos
+
+   # 0. Balanced (default)
+   on property:persist.genos.profile=0
+   exec u:r:magisk:s0 root root -- /sbin/profile.balance.sh
+   setprop sys.qcom.thermalcfg "/sbin/thermal/thermal-engine.conf"
+    stop thermal-engine
+    start thermal-engine
+
+   # 1. Performance
+   on property:persist.genos.profile=1
+   exec u:r:magisk:s0 root root -- /sbin/profile.performance.sh
+   setprop sys.qcom.thermalcfg "/sbin/thermal/thermal-engine-evaluation.conf"
+    stop thermal-engine
+    start thermal-engine
+
+   # 2. Battery
+   on property:persist.genos.profile=2
+   exec u:r:magisk:s0 root root -- /sbin/profile.battery.sh
+   setprop sys.qcom.thermalcfg "/sbin/thermal/thermal-engine-extreme.conf"
+    stop thermal-engine
+    start thermal-engine
+    
+   # 3. Gaming
+   on property:persist.genos.profile=3
+   exec u:r:magisk:s0 root root -- /sbin/profile.gaming.sh
+   setprop sys.qcom.thermalcfg "/sbin/thermal/thermal-engine-game.conf"
+    stop thermal-engine
+    start thermal-engine
+
+service thermal-engine /vendor/bin/thermal-engine -c ${sys.qcom.thermalcfg:-/sbin/thermal/thermal-engine.conf}
+   class main
+   user root
+   socket thermal-send-client stream 0666 system system
+   socket thermal-recv-client stream 0660 system system
+   socket thermal-recv-passive-client stream 0666 system system
+   socket thermal-send-rule stream 0660 system system
+   group root
+   socket thermal-send-client stream 0666 system system
+   socket thermal-recv-client stream 0660 system system
+   socket thermal-recv-passive-client stream 0666 system system
+
+on post-fs
+   # Mount thermal engine
+   mount none /sbin/thermal/oneplus/thermal-engine /vendor/bin/thermal-engine bind
