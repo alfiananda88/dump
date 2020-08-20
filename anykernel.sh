@@ -4,7 +4,7 @@
 ## AnyKernel setup
 # begin properties
 properties() { '
-kernel.string=Genos r6.1 kernel compiled with GCC 1O.2 Version of the kernel is 4.9.232 by DeckardShaww(aka Adil)
+kernel.string=Genos r5.1 kernel compiled with GCC 1O. Version of the kernel is 4.9.230 by DeckardShaww(aka Adil)
 do.devicecheck=1
 do.modules=0
 do.cleanup=1
